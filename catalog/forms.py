@@ -15,7 +15,7 @@ class StyleFormMixin(object):
 class ProductForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Product
-        exclude = ('views_count', 'slug',)
+        exclude = ('views_count', 'slug','owner')
 
     BLACKLIST = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно',
                  'обман', 'полиция', 'радар']
