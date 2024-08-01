@@ -1,0 +1,35 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="col-12 mb-5">
+  <a class="btn btn-outline-primary" href="{% url 'materials:create' %}">Добавить материал</a>
+</div>
+
+<div class="container">
+    <div class="row text-start">
+        {% for object in object_list %}
+      <div class="col-lg-4 mb-3">
+        <div style="width: 240px; height: 240px; overflow: hidden;">
+          <img src="{% mediapath object.image %}" style="width: 100%; height: auto;" />
+        </div>
+        <h2 class="fw-normal">{{ object|title }}</h2>
+
+        <div class="btn-group mb-3">
+          <a href="{% url 'materials:view' object.pk %}"
+             class="btn btn-sm btn-outline-secondary">View</a>
+          <a href="{% url 'materials:edit' object.pk %}"
+             class="btn btn-sm btn-outline-secondary">Edit</a>
+          <a href="{% url 'materials:delete' object.pk %}"
+             class="btn btn-sm btn-outline-danger">Delete</a>
+        </div>
+        {% if object.is_published %}
+        <a class="btn btn-warning" href="{% url 'materials:published' object.pk %}">Не публиковать</a>
+        {% else %}
+        <a class="btn btn-success"  href="{% url 'materials:published' object.pk %}">Опубликовать</a>
+        {% endif %}
+
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

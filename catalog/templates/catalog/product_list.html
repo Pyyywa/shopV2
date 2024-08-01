@@ -1,0 +1,33 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="col-12 mb-5">
+    <a class="btn btn-outline-primary" href="{% url 'catalog:create_product' %}">Добавить материал</a>
+</div>
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Товары</h1>
+</div>
+
+<div class="container">
+    <div class="row text-start">
+        {% for object in object_list %}
+        <div class="col-lg-4 mb-3">
+            <div style="width: 240px; height: 240px; overflow: hidden;">
+                <img src="{% mediapath object.image %}" style="width: 100%; height: auto;"/>
+            </div>
+            <h2 class="fw-normal">{{ object.product_name|title }}</h2>
+            <p>{{ object.desc|slice:":100" }}</p>
+            <p><h6><strong>{{ object.quantity_per_unit }} руб.</strong></h6></p>
+            <div class="btn-group mb-3">
+                <a href="{% url 'catalog:product_detail' object.pk %}"
+                   class="btn btn-sm btn-outline-secondary">View</a>
+                <a href="{% url 'catalog:update_product' object.pk %}"
+                   class="btn btn-sm btn-outline-secondary">Edit</a>
+                <a href="{% url 'catalog:delete_product' object.pk %}"
+                   class="btn btn-sm btn-outline-danger">Delete</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

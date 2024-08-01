@@ -1,0 +1,27 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block content %}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <!--убираем цикл тк работаем с CBV-->
+        <div class="col-md-4 mb-4">
+            <img src="{% mediapath object.image %}" class="card-img-top"/>
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ object.product_name|title }} ({{ object.slug }})</h5>
+                <p class="card-text"><strong>{{ object.quantity_per_unit }} руб.</strong></p>
+                <p class="card-text">Категория: {{ object.category }}</p>
+                <p class="card-text">Описание: {{ object.desc }}</p>
+                <p class="card-text">Версия:
+                    {% for object in version %}
+                    {{ object.version_number }} {{object.version_name }}
+                    {% endfor %}</p>
+
+                <p class="card-text">Создан: {{ object.сreation_date }}</p>
+                <p class="card-text">Количество просмотров: {{ object.views_count }}</p>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.container -->
+{% endblock %}
