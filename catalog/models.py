@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime
+from users.models import User
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -32,6 +33,8 @@ class Product(models.Model):
     views_count = models.IntegerField(default=0, verbose_name='просмотры')
     is_published = models.BooleanField(default=True, verbose_name='опубликовано')
     slug = models.CharField(max_length=150, verbose_name='slug', null=True, blank=True)
+
+    owner = models.ForeignKey(User, verbose_name='владелец', **NULLABLE, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f'{self.category} {self.product_name} '

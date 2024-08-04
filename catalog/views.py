@@ -6,6 +6,7 @@ from catalog.forms import ProductForm, VersionForm
 from pytils.translit import slugify
 from django.forms import inlineformset_factory, modelform_factory
 from django.db import transaction
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class ProductListView(ListView):
@@ -57,13 +58,15 @@ def contacts(request):
     return render(request, 'catalog/contacts.html', context)
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(CreateView,LoginRequiredMixin):
     model = Product
     form_class = modelform_factory(Product, form=ProductForm, exclude=['last_change_date', 'views_count', 'slug'])
 
     def form_valid(self, form):
         if form.is_valid():
             new_material = form.save()
+            user = self.request.user
+            new_material.owner = user
             new_material.slug = slugify(new_material.product_name)
             new_material.save()
         return super().form_valid(form)
