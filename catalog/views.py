@@ -2,11 +2,12 @@ from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from catalog.models import Product, Version
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from catalog.forms import ProductForm, VersionForm
+from catalog.forms import ProductForm, VersionForm, ProductModeratorForm
 from pytils.translit import slugify
 from django.forms import inlineformset_factory, modelform_factory
 from django.db import transaction
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 
 
 class ProductListView(ListView):
@@ -27,14 +28,16 @@ class ProductListView(ListView):
 #     return render(request, 'catalog/material_list.html', context)
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(DetailView, LoginRequiredMixin):
     model = Product
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        self.object.views_count += 1
-        self.object.save()
-        return self.object
+        if self.request.user == self.object.owner:
+            self.object.views_count += 1
+            self.object.save()
+            return self.object
+        raise PermissionDenied
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -58,7 +61,7 @@ def contacts(request):
     return render(request, 'catalog/contacts.html', context)
 
 
-class ProductCreateView(CreateView,LoginRequiredMixin):
+class ProductCreateView(CreateView, LoginRequiredMixin):
     model = Product
     form_class = modelform_factory(Product, form=ProductForm, exclude=['last_change_date', 'views_count', 'slug'])
 
@@ -85,7 +88,7 @@ class ProductCreateView(CreateView,LoginRequiredMixin):
         return reverse('catalog:home')
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
 
@@ -129,6 +132,15 @@ class ProductUpdateView(UpdateView):
         else:
             context_data['formset'] = VersionFormset(instance=self.object)
         return context_data
+
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return ProductForm
+        if user.has_perm('product.can_change_is_published') and user.has_perm(
+                'product.can_change_desc') and user.has_perm('product.can_change_category'):
+            return ProductModeratorForm
+        raise PermissionDenied
 
 
 class ProductDeleteView(DeleteView):

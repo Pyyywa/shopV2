@@ -12,21 +12,28 @@
 
 <div class="container">
     <div class="row text-start">
+
         {% for object in object_list %}
         <div class="col-lg-4 mb-3">
             <div style="width: 240px; height: 240px; overflow: hidden;">
                 <img src="{% mediapath object.image %}" style="width: 100%; height: auto;"/>
             </div>
+
             <h2 class="fw-normal">{{ object.product_name|title }}</h2>
             <p>{{ object.desc|slice:":100" }}</p>
             <p><h6><strong>{{ object.quantity_per_unit }} руб.</strong></h6></p>
+
             <div class="btn-group mb-3">
                 <a href="{% url 'catalog:product_detail' object.pk %}"
                    class="btn btn-sm btn-outline-secondary">View</a>
+
+                {% if perms.product.can_change_is_published and perms.product.can_change_desc and perms.product.can_change_category or user == product.owner %}
                 <a href="{% url 'catalog:update_product' object.pk %}"
                    class="btn btn-sm btn-outline-secondary">Edit</a>
                 <a href="{% url 'catalog:delete_product' object.pk %}"
                    class="btn btn-sm btn-outline-danger">Delete</a>
+                {% endif %}
+
             </div>
         </div>
         {% endfor %}

@@ -40,7 +40,6 @@ def email_verification(request, token):
     return redirect(reverse('users:login'))
 
 
-
 class NewPasswordView(PasswordResetView):
     form_class = PasswordResetForm
     template_name = "users/reset_password.html"

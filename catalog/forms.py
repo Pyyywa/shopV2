@@ -13,12 +13,12 @@ class StyleFormMixin(object):
 
 
 class ProductForm(StyleFormMixin, ModelForm):
+    BLACKLIST = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно',
+                 'обман', 'полиция', 'радар']
+
     class Meta:
         model = Product
         exclude = ('views_count', 'slug','owner')
-
-    BLACKLIST = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно',
-                 'обман', 'полиция', 'радар']
 
     def clean_product_name(self):
         cleaned_data = self.cleaned_data["product_name"]
@@ -26,6 +26,22 @@ class ProductForm(StyleFormMixin, ModelForm):
             if word in cleaned_data.lower():
                 raise ValidationError(f'Наименование не должно содержать слово {word}')
         return cleaned_data
+
+    def clean_desc(self):
+        cleaned_data = self.cleaned_data["desc"]
+        for word in self.BLACKLIST:
+            if word in cleaned_data.lower():
+                raise ValidationError(f'Описание не должно содержать слово {word}')
+        return cleaned_data
+
+
+class ProductModeratorForm(StyleFormMixin, ModelForm):
+    BLACKLIST = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево', 'бесплатно',
+                 'обман', 'полиция', 'радар']
+
+    class Meta:
+        model = Product
+        fields = ('desc', 'category', 'is_published')
 
     def clean_desc(self):
         cleaned_data = self.cleaned_data["desc"]
