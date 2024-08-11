@@ -1,5 +1,4 @@
 import secrets
-from django.shortcuts import render
 from users.models import User
 from django.views.generic import CreateView
 from users.forms import UserRegForm

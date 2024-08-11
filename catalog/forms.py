@@ -1,5 +1,5 @@
 from catalog.models import Product, Version
-from django.forms import ModelForm, BooleanField, ValidationError, HiddenInput
+from django.forms import ModelForm, BooleanField, ValidationError
 
 
 class StyleFormMixin(object):
@@ -18,7 +18,7 @@ class ProductForm(StyleFormMixin, ModelForm):
 
     class Meta:
         model = Product
-        exclude = ('views_count', 'slug','owner')
+        exclude = ('views_count', 'slug', 'owner')
 
     def clean_product_name(self):
         cleaned_data = self.cleaned_data["product_name"]
